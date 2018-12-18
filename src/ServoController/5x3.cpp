@@ -21,11 +21,22 @@ const modular_server::HardwareInfo hardware_info =
   .version_major=1,
   .version_minor=0,
 };
+
+TwoWire * wire_ptr = &Wire;
+const size_t output_enable_pin = 2;
+
+const uint8_t pca9685_addresses[PCA9685_COUNT] =
+{
+  0x40,
+  0x41
+};
+
 // Pins
 
 // Units
 
 // Properties
+const long channel_count_default = CHANNEL_COUNT_MAX;
 
 // Parameters
 

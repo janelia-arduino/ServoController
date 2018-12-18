@@ -28,6 +28,19 @@ public:
   ServoController();
   virtual void setup();
 
+  virtual size_t getChannelCount();
+
+  void enableAll();
+  void disableAll();
+
+  void setChannelPulseDuration(size_t channel,
+    size_t pulse_duration);
+  void setAllChannelsPulseDuration(size_t pulse_duration);
+
+protected:
+  // Handlers
+  void setChannelCountHandler();
+
 private:
   modular_server::Pin pins_[servo_controller::constants::PIN_COUNT_MAX];
 
@@ -37,6 +50,10 @@ private:
   modular_server::Callback callbacks_[servo_controller::constants::CALLBACK_COUNT_MAX];
 
   // Handlers
+  void enableAllHandler(modular_server::Pin * pin_ptr);
+  void disableAllHandler(modular_server::Pin * pin_ptr);
+  void setChannelPulseDurationHandler();
+  void setAllChannelsPulseDurationHandler();
 
 };
 

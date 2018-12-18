@@ -19,6 +19,11 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{PIN_COUNT_MAX=1};
 
+enum {PCA9685_COUNT=2};
+enum {CHANNEL_COUNT_MAX=32};
+
+extern const uint8_t pca9685_addresses[PCA9685_COUNT];
+
 // Pins
 
 // Units
