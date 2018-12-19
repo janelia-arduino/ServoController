@@ -46,7 +46,7 @@ public:
 
 protected:
   // Handlers
-  void setChannelCountHandler();
+  virtual void setChannelCountHandler();
 
 private:
   modular_server::Pin pins_[servo_controller::constants::PIN_COUNT_MAX];
