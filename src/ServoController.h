@@ -34,8 +34,15 @@ public:
   void disableAll();
 
   void setChannelPulseDuration(size_t channel,
-    size_t pulse_duration);
-  void setAllChannelsPulseDuration(size_t pulse_duration);
+    uint16_t pulse_duration);
+  void setAllChannelsPulseDuration(uint16_t pulse_duration);
+
+  void rotateTo(size_t channel,
+    double angle);
+  void rotateAllTo(double angle);
+  void rotateBy(size_t channel,
+    double angle);
+  void rotateAllBy(double angle);
 
 protected:
   // Handlers
@@ -49,11 +56,20 @@ private:
   modular_server::Function functions_[servo_controller::constants::FUNCTION_COUNT_MAX];
   modular_server::Callback callbacks_[servo_controller::constants::CALLBACK_COUNT_MAX];
 
+  uint16_t pulse_durations_[servo_controller::constants::CHANNEL_COUNT_MAX];
+
+  long angleToPulseDuration(size_t channel,
+    double angle);
+
   // Handlers
   void enableAllHandler(modular_server::Pin * pin_ptr);
   void disableAllHandler(modular_server::Pin * pin_ptr);
   void setChannelPulseDurationHandler();
   void setAllChannelsPulseDurationHandler();
+  void rotateToHandler();
+  void rotateAllToHandler();
+  void rotateByHandler();
+  void rotateAllByHandler();
 
 };
 

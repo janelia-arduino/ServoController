@@ -17,6 +17,38 @@
 * API NAMES
 
   #+BEGIN_SRC js
+    {
+      "id": "getApi",
+      "result": {
+        "firmware": [
+          "ServoController"
+        ],
+        "verbosity": "NAMES",
+        "functions": [
+          "setChannelPulseDuration",
+          "setAllChannelsPulseDuration",
+          "rotateTo",
+          "rotateAllTo",
+          "rotateBy",
+          "rotateAllBy"
+        ],
+        "parameters": [
+          "channel",
+          "pulse_duration",
+          "angle"
+        ],
+        "properties": [
+          "channelCount",
+          "centerPulseDuration",
+          "travelPerUnitPulseDuration",
+          "directionInverted"
+        ],
+        "callbacks": [
+          "enableAll",
+          "disableAll"
+        ]
+      }
+    }
   #+END_SRC
 
 * API GENERAL

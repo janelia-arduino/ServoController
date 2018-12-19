@@ -32,6 +32,10 @@ void ServoController::setup()
   resetWatchdog();
 
   // Variable Setup
+  for (size_t channel=0; channel<constants::CHANNEL_COUNT_MAX; ++channel)
+  {
+    pulse_durations_[channel] = constants::center_pulse_duration_element_default;
+  }
 
   // Set Device ID
   modular_server_.setDeviceName(constants::device_name);
@@ -54,6 +58,16 @@ void ServoController::setup()
   channel_count_property.setRange(constants::channel_count_min,constants::CHANNEL_COUNT_MAX);
   channel_count_property.attachPostSetValueFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::setChannelCountHandler));
 
+  modular_server::Property & center_pulse_duration_property = modular_server_.createProperty(constants::center_pulse_duration_property_name,constants::center_pulse_duration_default);
+  center_pulse_duration_property.setUnits(constants::us_units);
+  center_pulse_duration_property.setRange(constants::pulse_duration_min,constants::pulse_duration_max);
+
+  modular_server::Property & travel_per_unit_pulse_duration_property = modular_server_.createProperty(constants::travel_per_unit_pulse_duration_property_name,constants::travel_per_unit_pulse_duration_default);
+  travel_per_unit_pulse_duration_property.setUnits(constants::degree_per_us_units);
+  travel_per_unit_pulse_duration_property.setRange(constants::travel_per_unit_pulse_duration_min,constants::travel_per_unit_pulse_duration_max);
+
+  modular_server_.createProperty(constants::direction_inverted_property_name,constants::direction_inverted_default);
+
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
   channel_parameter.setTypeLong();
@@ -61,6 +75,12 @@ void ServoController::setup()
   modular_server::Parameter & pulse_duration_parameter = modular_server_.createParameter(constants::pulse_duration_parameter_name);
   pulse_duration_parameter.setRange(constants::pulse_duration_min,constants::pulse_duration_max);
   pulse_duration_parameter.setUnits(constants::us_units);
+
+  modular_server::Parameter & angle_parameter = modular_server_.createParameter(constants::angle_parameter_name);
+  angle_parameter.setRange(constants::angle_min,constants::angle_max);
+  angle_parameter.setUnits(constants::degree_units);
+
+  setChannelCountHandler();
 
   // Functions
   modular_server::Function & set_channel_pulse_duration_function = modular_server_.createFunction(constants::set_channel_pulse_duration_function_name);
@@ -71,6 +91,24 @@ void ServoController::setup()
   modular_server::Function & set_all_channels_pulse_duration_function = modular_server_.createFunction(constants::set_all_channels_pulse_duration_function_name);
   set_all_channels_pulse_duration_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::setAllChannelsPulseDurationHandler));
   set_all_channels_pulse_duration_function.addParameter(pulse_duration_parameter);
+
+  modular_server::Function & rotate_to_function = modular_server_.createFunction(constants::rotate_to_function_name);
+  rotate_to_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::rotateToHandler));
+  rotate_to_function.addParameter(channel_parameter);
+  rotate_to_function.addParameter(angle_parameter);
+
+  modular_server::Function & rotate_all_to_function = modular_server_.createFunction(constants::rotate_all_to_function_name);
+  rotate_all_to_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::rotateAllToHandler));
+  rotate_all_to_function.addParameter(angle_parameter);
+
+  modular_server::Function & rotate_by_function = modular_server_.createFunction(constants::rotate_by_function_name);
+  rotate_by_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::rotateByHandler));
+  rotate_by_function.addParameter(channel_parameter);
+  rotate_by_function.addParameter(angle_parameter);
+
+  modular_server::Function & rotate_all_by_function = modular_server_.createFunction(constants::rotate_all_by_function_name);
+  rotate_all_by_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&ServoController::rotateAllByHandler));
+  rotate_all_by_function.addParameter(angle_parameter);
 
   // Callbacks
   modular_server::Callback & enable_all_callback = modular_server_.createCallback(constants::enable_all_callback_name);
@@ -100,14 +138,87 @@ void ServoController::disableAll()
 }
 
 void ServoController::setChannelPulseDuration(size_t channel,
-  size_t pulse_duration)
+  uint16_t pulse_duration)
 {
+  if (channel >= getChannelCount())
+  {
+    return;
+  }
   PCA9685::setChannelServoPulseDuration(channel,pulse_duration);
+  pulse_durations_[channel] = pulse_duration;
 }
 
-void ServoController::setAllChannelsPulseDuration(size_t pulse_duration)
+void ServoController::setAllChannelsPulseDuration(uint16_t pulse_duration)
 {
   PCA9685::setAllChannelsServoPulseDuration(pulse_duration);
+  for (size_t channel=0; channel<getChannelCount(); ++channel)
+  {
+    pulse_durations_[channel] = pulse_duration;
+  }
+}
+
+void ServoController::rotateTo(size_t channel,
+  double angle)
+{
+  if (channel >= getChannelCount())
+  {
+    return;
+  }
+  long center_pulse_duration;
+  modular_server::Property & center_pulse_duration_property = modular_server_.property(constants::center_pulse_duration_property_name);
+  center_pulse_duration_property.getElementValue(channel,center_pulse_duration);
+
+  uint16_t pulse_duration = angleToPulseDuration(channel,angle) + center_pulse_duration;
+  setChannelPulseDuration(channel,pulse_duration);
+}
+
+void ServoController::rotateAllTo(double angle)
+{
+  for (size_t channel=0; channel<getChannelCount(); ++channel)
+  {
+    rotateTo(channel,angle);
+  }
+}
+
+void ServoController::rotateBy(size_t channel,
+  double angle)
+{
+  if (channel >= getChannelCount())
+  {
+    return;
+  }
+  uint16_t current_pulse_duration = pulse_durations_[channel];
+
+  uint16_t pulse_duration = angleToPulseDuration(channel,angle) + current_pulse_duration;
+  setChannelPulseDuration(channel,pulse_duration);
+}
+
+void ServoController::rotateAllBy(double angle)
+{
+  for (size_t channel=0; channel<getChannelCount(); ++channel)
+  {
+    rotateBy(channel,angle);
+  }
+}
+
+long ServoController::angleToPulseDuration(size_t channel,
+  double angle)
+{
+  double travel_per_unit_pulse_duration;
+  modular_server::Property & travel_per_unit_pulse_duration_property = modular_server_.property(constants::travel_per_unit_pulse_duration_property_name);
+  travel_per_unit_pulse_duration_property.getElementValue(channel,travel_per_unit_pulse_duration);
+
+  bool direction_inverted;
+  modular_server::Property & direction_inverted_property = modular_server_.property(constants::direction_inverted_property_name);
+  direction_inverted_property.getElementValue(channel,direction_inverted);
+
+  int polarity = -1;
+  if (direction_inverted)
+  {
+    polarity = 1;
+  }
+
+  return polarity * round(angle / travel_per_unit_pulse_duration);
 }
 
 // Handlers must be non-blocking (avoid 'delay')
@@ -131,6 +242,15 @@ void ServoController::setAllChannelsPulseDuration(size_t pulse_duration)
 void ServoController::setChannelCountHandler()
 {
   size_t channel_count = getChannelCount();
+
+  modular_server::Property & center_pulse_duration_property = modular_server_.property(constants::center_pulse_duration_property_name);
+  center_pulse_duration_property.setArrayLengthRange(channel_count,channel_count);
+
+  modular_server::Property & travel_per_unit_pulse_duration_property = modular_server_.property(constants::travel_per_unit_pulse_duration_property_name);
+  travel_per_unit_pulse_duration_property.setArrayLengthRange(channel_count,channel_count);
+
+  modular_server::Property & direction_inverted_property = modular_server_.property(constants::direction_inverted_property_name);
+  direction_inverted_property.setArrayLengthRange(channel_count,channel_count);
 
   modular_server::Parameter & channel_parameter = modular_server_.parameter(constants::channel_parameter_name);
   channel_parameter.setRange(constants::channel_min,(long)(channel_count-1));
@@ -161,4 +281,36 @@ void ServoController::setAllChannelsPulseDurationHandler()
   long pulse_duration;
   modular_server_.parameter(constants::pulse_duration_parameter_name).getValue(pulse_duration);
   setAllChannelsPulseDuration(pulse_duration);
+}
+
+void ServoController::rotateToHandler()
+{
+  long channel;
+  modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
+  double angle;
+  modular_server_.parameter(constants::angle_parameter_name).getValue(angle);
+  rotateTo(channel,angle);
+}
+
+void ServoController::rotateAllToHandler()
+{
+  double angle;
+  modular_server_.parameter(constants::angle_parameter_name).getValue(angle);
+  rotateAllTo(angle);
+}
+
+void ServoController::rotateByHandler()
+{
+  long channel;
+  modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
+  double angle;
+  modular_server_.parameter(constants::angle_parameter_name).getValue(angle);
+  rotateBy(channel,angle);
+}
+
+void ServoController::rotateAllByHandler()
+{
+  double angle;
+  modular_server_.parameter(constants::angle_parameter_name).getValue(angle);
+  rotateAllBy(angle);
 }

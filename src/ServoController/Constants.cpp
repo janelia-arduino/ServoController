@@ -30,10 +30,23 @@ CONSTANT_STRING(hardware_name,"servo_controller");
 
 // Units
 CONSTANT_STRING(us_units,"us");
+CONSTANT_STRING(degree_per_us_units,"degree/us");
+CONSTANT_STRING(degree_units,"degree");
 
 // Properties
 CONSTANT_STRING(channel_count_property_name,"channelCount");
 const long channel_count_min = 1;
+
+CONSTANT_STRING(center_pulse_duration_property_name,"centerPulseDuration");
+const long center_pulse_duration_element_default = 1500;
+
+CONSTANT_STRING(travel_per_unit_pulse_duration_property_name,"travelPerUnitPulseDuration");
+const double travel_per_unit_pulse_duration_min = 0.04;
+const double travel_per_unit_pulse_duration_max = 0.2;
+const double travel_per_unit_pulse_duration_element_default = 0.085;
+
+CONSTANT_STRING(direction_inverted_property_name,"directionInverted");
+const bool direction_inverted_element_default = false;
 
 // Parameters
 CONSTANT_STRING(channel_parameter_name,"channel");
@@ -43,9 +56,17 @@ CONSTANT_STRING(pulse_duration_parameter_name,"pulse_duration");
 const long pulse_duration_min = 50;
 const long pulse_duration_max = 5000;
 
+CONSTANT_STRING(angle_parameter_name,"angle");
+const double angle_min = -180.0;
+const double angle_max = 180.0;
+
 // Functions
 CONSTANT_STRING(set_channel_pulse_duration_function_name,"setChannelPulseDuration");
 CONSTANT_STRING(set_all_channels_pulse_duration_function_name,"setAllChannelsPulseDuration");
+CONSTANT_STRING(rotate_to_function_name,"rotateTo");
+CONSTANT_STRING(rotate_all_to_function_name,"rotateAllTo");
+CONSTANT_STRING(rotate_by_function_name,"rotateBy");
+CONSTANT_STRING(rotate_all_by_function_name,"rotateAllBy");
 
 // Callbacks
 CONSTANT_STRING(enable_all_callback_name,"enableAll");

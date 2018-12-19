@@ -30,6 +30,11 @@ extern const uint8_t pca9685_addresses[PCA9685_COUNT];
 
 // Properties
 // Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
+extern const long center_pulse_duration_default[CHANNEL_COUNT_MAX];
+
+extern const double travel_per_unit_pulse_duration_default[CHANNEL_COUNT_MAX];
+
+extern const bool direction_inverted_default[CHANNEL_COUNT_MAX];
 
 // Parameters
 
