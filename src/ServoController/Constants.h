@@ -10,6 +10,7 @@
 #include <ConstantVariable.h>
 #include <ModularDeviceBase.h>
 #include <Wire.h>
+#include <PCA9685.h>
 
 
 namespace servo_controller

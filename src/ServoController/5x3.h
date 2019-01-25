@@ -20,7 +20,7 @@ namespace constants
 enum{PIN_COUNT_MAX=1};
 
 enum {PCA9685_COUNT=2};
-enum {CHANNEL_COUNT_MAX=32};
+enum {CHANNEL_COUNT_MAX=PCA9685_COUNT*PCA9685::CHANNELS_PER_DEVICE};
 
 extern const uint8_t pca9685_addresses[PCA9685_COUNT];
 
