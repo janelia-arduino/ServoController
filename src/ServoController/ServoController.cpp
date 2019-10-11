@@ -37,6 +37,9 @@ void ServoController::setup()
     pulse_durations_[channel] = constants::center_pulse_duration_element_default;
   }
 
+  // Event Controller Setup
+  event_controller_.setup();
+
   // Set Device ID
   modular_server_.setDeviceName(constants::device_name);
 
@@ -198,6 +201,33 @@ void ServoController::rotateAllBy(double angle)
   for (size_t channel=0; channel<getChannelCount(); ++channel)
   {
     rotateBy(channel,angle);
+  }
+}
+
+void ServoController::rotateBetween(size_t channel,
+  double begin_angle,
+  double end_angle,
+  size_t duration)
+{
+  if ((channel >= getChannelCount()) || (event_controller_.eventsAvailable() == 0))
+  {
+    return;
+  }
+  long delay = duration * constants::milliseconds_per_second;
+  EventId event_id = event_controller_.addEventUsingDelay(makeFunctor((Functor1<int> *)0,*this,&ServoController::hideHandler),
+    delay,
+    channel);
+  expose(channel);
+  event_controller_.enable(event_id);
+}
+
+void ServoController::rotateAll(double begin_angle,
+  double end_angle,
+  size_t duration)
+{
+  for (size_t channel=0; channel<getChannelCount(); ++channel)
+  {
+    rotateBetween(channel,begin_angle,end_angle,duration);
   }
 }
 

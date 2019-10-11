@@ -4,7 +4,7 @@
 
 * Library Information
   - Name :: ServoController
-  - Version :: 1.0.1
+  - Version :: 2.0.0
   - License :: BSD
   - URL :: https://github.com/janelia-arduino/ServoController
   - Author :: Peter Polidoro
@@ -17,38 +17,6 @@
 * API NAMES
 
   #+BEGIN_SRC js
-    {
-      "id": "getApi",
-      "result": {
-        "firmware": [
-          "ServoController"
-        ],
-        "verbosity": "NAMES",
-        "functions": [
-          "setChannelPulseDuration",
-          "setAllChannelsPulseDuration",
-          "rotateTo",
-          "rotateAllTo",
-          "rotateBy",
-          "rotateAllBy"
-        ],
-        "parameters": [
-          "channel",
-          "pulse_duration",
-          "angle"
-        ],
-        "properties": [
-          "channelCount",
-          "centerPulseDuration",
-          "travelPerUnitPulseDuration",
-          "directionInverted"
-        ],
-        "callbacks": [
-          "enableAll",
-          "disableAll"
-        ]
-      }
-    }
   #+END_SRC
 
 * API GENERAL

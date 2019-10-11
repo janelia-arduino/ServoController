@@ -16,6 +16,8 @@
 
 #include <PCA9685.h>
 
+#include <EventController.h>
+
 #include <ModularServer.h>
 #include <ModularDeviceBase.h>
 
@@ -44,6 +46,15 @@ public:
     double angle);
   void rotateAllBy(double angle);
 
+  void rotateBetween(size_t channel,
+    double begin_angle,
+    double end_angle,
+    size_t duration);
+
+  void rotateAllBetween(double begin_angle,
+    double end_angle,
+    size_t duration);
+
 protected:
   // Handlers
   virtual void setChannelCountHandler();
@@ -57,6 +68,8 @@ private:
   modular_server::Callback callbacks_[servo_controller::constants::CALLBACK_COUNT_MAX];
 
   uint16_t pulse_durations_[servo_controller::constants::CHANNEL_COUNT_MAX];
+
+  EventController<servo_controller::constants::EVENT_COUNT_MAX> event_controller_;
 
   long angleToPulseDuration(size_t channel,
     double angle);
