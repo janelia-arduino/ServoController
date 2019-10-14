@@ -46,16 +46,17 @@ public:
     double angle);
   void rotateAllBy(double angle);
 
-  void rotateBetween(size_t channel,
-    double begin_angle,
-    double end_angle,
-    size_t duration);
-
-  void rotateAllBetween(double begin_angle,
-    double end_angle,
-    size_t duration);
-
 protected:
+  void addPwm(size_t channel,
+    long delay,
+    long period,
+    long on_duration,
+    long count,
+    const Functor1<int> & start_pulse_functor,
+    const Functor1<int> & stop_pulse_functor,
+    const Functor1<int> & start_pwm_functor,
+    const Functor1<int> & stop_pwm_functor);
+
   // Handlers
   virtual void setChannelCountHandler();
 
@@ -70,6 +71,7 @@ private:
   uint16_t pulse_durations_[servo_controller::constants::CHANNEL_COUNT_MAX];
 
   EventController<servo_controller::constants::EVENT_COUNT_MAX> event_controller_;
+  EventIdPair event_id_pairs_[servo_controller::constants::CHANNEL_COUNT_MAX];
 
   long angleToPulseDuration(size_t channel,
     double angle);

@@ -204,31 +204,32 @@ void ServoController::rotateAllBy(double angle)
   }
 }
 
-void ServoController::rotateBetween(size_t channel,
-  double begin_angle,
-  double end_angle,
-  size_t duration)
+void ServoController::addPwm(size_t channel,
+  long delay,
+  long period,
+  long on_duration,
+  long count,
+  const Functor1<int> & start_pulse_functor,
+  const Functor1<int> & stop_pulse_functor,
+  const Functor1<int> & start_pwm_functor,
+  const Functor1<int> & stop_pwm_functor)
 {
-  if ((channel >= getChannelCount()) || (event_controller_.eventsAvailable() == 0))
+  if ((channel >= getChannelCount()) || (event_controller_.eventsAvailable() < 2))
   {
     return;
   }
-  long delay = duration * constants::milliseconds_per_second;
-  EventId event_id = event_controller_.addEventUsingDelay(makeFunctor((Functor1<int> *)0,*this,&ServoController::hideHandler),
+  EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(
+    start_pulse_functor,
+    stop_pulse_functor,
     delay,
+    period,
+    on_duration,
+    count,
     channel);
-  expose(channel);
-  event_controller_.enable(event_id);
-}
-
-void ServoController::rotateAll(double begin_angle,
-  double end_angle,
-  size_t duration)
-{
-  for (size_t channel=0; channel<getChannelCount(); ++channel)
-  {
-    rotateBetween(channel,begin_angle,end_angle,duration);
-  }
+  event_controller_.addStartFunctor(event_id_pair,start_pwm_functor);
+  event_controller_.addStopFunctor(event_id_pair,stop_pwm_functor);
+  event_controller_.enable(event_id_pair);
+  event_id_pairs_[channel] = event_id_pair;
 }
 
 long ServoController::angleToPulseDuration(size_t channel,
