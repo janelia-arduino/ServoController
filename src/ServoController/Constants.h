@@ -18,7 +18,7 @@ namespace servo_controller
 namespace constants
 {
 //MAX values must be >= 1, >= created/copied count, < RAM limit
-enum{PROPERTY_COUNT_MAX=4};
+enum{PROPERTY_COUNT_MAX=5};
 enum{PARAMETER_COUNT_MAX=3};
 enum{FUNCTION_COUNT_MAX=6};
 enum{CALLBACK_COUNT_MAX=2};
@@ -34,12 +34,23 @@ extern const modular_server::HardwareInfo hardware_info;
 extern TwoWire * wire_ptr;
 extern const size_t output_enable_pin;
 
+extern const long milliseconds_per_second;
+
+extern const long velocity_period_ms;
+
+struct ChannelInfo
+{
+  uint16_t pulse_duration;
+  EventId velocity_event_id;
+};
+
 // Pins
 
 // Units
 extern ConstantString us_units;
 extern ConstantString degree_per_us_units;
 extern ConstantString degree_units;
+extern ConstantString unit_pulse_duration_per_s_units;
 
 // Properties
 // Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
@@ -57,6 +68,11 @@ extern const double travel_per_unit_pulse_duration_element_default;
 
 extern ConstantString direction_inverted_property_name;
 extern const bool direction_inverted_element_default;
+
+extern ConstantString velocity_limit_property_name;
+extern const long velocity_limit_min;
+extern const long velocity_limit_max;
+extern const long velocity_limit_element_default;
 
 // Parameters
 extern ConstantString channel_parameter_name;

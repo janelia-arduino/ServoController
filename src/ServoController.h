@@ -47,15 +47,9 @@ public:
   void rotateAllBy(double angle);
 
 protected:
-  void addPwm(size_t channel,
+  void addEvent(size_t channel,
     long delay,
-    long period,
-    long on_duration,
-    long count,
-    const Functor1<int> & start_pulse_functor,
-    const Functor1<int> & stop_pulse_functor,
-    const Functor1<int> & start_pwm_functor,
-    const Functor1<int> & stop_pwm_functor);
+    const Functor1<int> & event_functor);
 
   // Handlers
   virtual void setChannelCountHandler();
@@ -68,13 +62,14 @@ private:
   modular_server::Function functions_[servo_controller::constants::FUNCTION_COUNT_MAX];
   modular_server::Callback callbacks_[servo_controller::constants::CALLBACK_COUNT_MAX];
 
-  uint16_t pulse_durations_[servo_controller::constants::CHANNEL_COUNT_MAX];
+  servo_controller::constants::ChannelInfo  channel_info_array_[servo_controller::constants::CHANNEL_COUNT_MAX];
 
   EventController<servo_controller::constants::EVENT_COUNT_MAX> event_controller_;
-  EventIdPair event_id_pairs_[servo_controller::constants::CHANNEL_COUNT_MAX];
+  EventId event_ids_[servo_controller::constants::CHANNEL_COUNT_MAX];
 
   long angleToPulseDuration(size_t channel,
     double angle);
+  void setupVelocityEvents();
 
   // Handlers
   void enableAllHandler(modular_server::Pin * pin_ptr);
@@ -85,6 +80,7 @@ private:
   void rotateAllToHandler();
   void rotateByHandler();
   void rotateAllByHandler();
+  void velocityHandler(int channel);
 
 };
 

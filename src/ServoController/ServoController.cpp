@@ -32,10 +32,6 @@ void ServoController::setup()
   resetWatchdog();
 
   // Variable Setup
-  for (size_t channel=0; channel<constants::CHANNEL_COUNT_MAX; ++channel)
-  {
-    pulse_durations_[channel] = constants::center_pulse_duration_element_default;
-  }
 
   // Event Controller Setup
   event_controller_.setup();
@@ -70,6 +66,10 @@ void ServoController::setup()
   travel_per_unit_pulse_duration_property.setRange(constants::travel_per_unit_pulse_duration_min,constants::travel_per_unit_pulse_duration_max);
 
   modular_server_.createProperty(constants::direction_inverted_property_name,constants::direction_inverted_default);
+
+  modular_server::Property & velocity_limit_property = modular_server_.createProperty(constants::velocity_limit_property_name,constants::velocity_limit_default);
+  velocity_limit_property.setUnits(constants::unit_pulse_duration_per_s_units);
+  velocity_limit_property.setRange(constants::velocity_limit_min,constants::velocity_limit_max);
 
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
@@ -120,6 +120,7 @@ void ServoController::setup()
   modular_server::Callback & disable_all_callback = modular_server_.createCallback(constants::disable_all_callback_name);
   disable_all_callback.attachFunctor(makeFunctor((Functor1<modular_server::Pin *> *)0,*this,&ServoController::disableAllHandler));
 
+  setupVelocityEvents();
 }
 
 size_t ServoController::getChannelCount()
@@ -147,16 +148,19 @@ void ServoController::setChannelPulseDuration(size_t channel,
   {
     return;
   }
+  event_controller_.clear(event_ids_[channel]);
+  // long pulse_duration_diff = pulse_duration - channel_info_array_[channel].pulse_duration;
   PCA9685::setChannelServoPulseDuration(channel,pulse_duration);
-  pulse_durations_[channel] = pulse_duration;
+  noInterrupts();
+  channel_info_array_[channel].pulse_duration = pulse_duration;
+  interrupts();
 }
 
 void ServoController::setAllChannelsPulseDuration(uint16_t pulse_duration)
 {
-  PCA9685::setAllChannelsServoPulseDuration(pulse_duration);
   for (size_t channel=0; channel<getChannelCount(); ++channel)
   {
-    pulse_durations_[channel] = pulse_duration;
+    setChannelPulseDuration(channel,pulse_duration);
   }
 }
 
@@ -190,7 +194,9 @@ void ServoController::rotateBy(size_t channel,
   {
     return;
   }
-  uint16_t current_pulse_duration = pulse_durations_[channel];
+  noInterrupts();
+  uint16_t current_pulse_duration = channel_info_array_[channel].pulse_duration;
+  interrupts();
 
   uint16_t pulse_duration = angleToPulseDuration(channel,angle) + current_pulse_duration;
   setChannelPulseDuration(channel,pulse_duration);
@@ -204,32 +210,20 @@ void ServoController::rotateAllBy(double angle)
   }
 }
 
-void ServoController::addPwm(size_t channel,
+void ServoController::addEvent(size_t channel,
   long delay,
-  long period,
-  long on_duration,
-  long count,
-  const Functor1<int> & start_pulse_functor,
-  const Functor1<int> & stop_pulse_functor,
-  const Functor1<int> & start_pwm_functor,
-  const Functor1<int> & stop_pwm_functor)
+  const Functor1<int> & event_functor)
 {
-  if ((channel >= getChannelCount()) || (event_controller_.eventsAvailable() < 2))
+  if ((channel >= getChannelCount()) || (event_controller_.eventsAvailable() < 1))
   {
     return;
   }
-  EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(
-    start_pulse_functor,
-    stop_pulse_functor,
+  EventId event_id = event_controller_.addEventUsingDelay(
+    event_functor,
     delay,
-    period,
-    on_duration,
-    count,
     channel);
-  event_controller_.addStartFunctor(event_id_pair,start_pwm_functor);
-  event_controller_.addStopFunctor(event_id_pair,stop_pwm_functor);
-  event_controller_.enable(event_id_pair);
-  event_id_pairs_[channel] = event_id_pair;
+  event_controller_.enable(event_id);
+  event_ids_[channel] = event_id;
 }
 
 long ServoController::angleToPulseDuration(size_t channel,
@@ -250,6 +244,14 @@ long ServoController::angleToPulseDuration(size_t channel,
   }
 
   return polarity * round(angle / travel_per_unit_pulse_duration);
+}
+
+void ServoController::setupVelocityEvents()
+{
+  for (size_t channel=0; channel<constants::CHANNEL_COUNT_MAX; ++channel)
+  {
+    channel_info_array_[channel].pulse_duration = constants::center_pulse_duration_element_default;
+  }
 }
 
 // Handlers must be non-blocking (avoid 'delay')
@@ -282,6 +284,9 @@ void ServoController::setChannelCountHandler()
 
   modular_server::Property & direction_inverted_property = modular_server_.property(constants::direction_inverted_property_name);
   direction_inverted_property.setArrayLengthRange(channel_count,channel_count);
+
+  modular_server::Property & velocity_limit_property = modular_server_.property(constants::velocity_limit_property_name);
+  velocity_limit_property.setArrayLengthRange(channel_count,channel_count);
 
   modular_server::Parameter & channel_parameter = modular_server_.parameter(constants::channel_parameter_name);
   channel_parameter.setRange(constants::channel_min,(long)(channel_count-1));
@@ -344,4 +349,8 @@ void ServoController::rotateAllByHandler()
   double angle;
   modular_server_.parameter(constants::angle_parameter_name).getValue(angle);
   rotateAllBy(angle);
+}
+
+void ServoController::velocityHandler(int channel)
+{
 }

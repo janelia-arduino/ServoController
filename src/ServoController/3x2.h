@@ -22,7 +22,7 @@ enum{PIN_COUNT_MAX=1};
 enum {PCA9685_COUNT=1};
 enum {CHANNEL_COUNT_MAX=PCA9685_COUNT*PCA9685::CHANNELS_PER_DEVICE};
 
-enum{EVENT_COUNT_MAX=36};
+enum{EVENT_COUNT_MAX=32};
 
 extern const uint8_t pca9685_addresses[PCA9685_COUNT];
 
@@ -37,6 +37,8 @@ extern const long center_pulse_duration_default[CHANNEL_COUNT_MAX];
 extern const double travel_per_unit_pulse_duration_default[CHANNEL_COUNT_MAX];
 
 extern const bool direction_inverted_default[CHANNEL_COUNT_MAX];
+
+extern const long velocity_limit_default[CHANNEL_COUNT_MAX];
 
 // Parameters
 

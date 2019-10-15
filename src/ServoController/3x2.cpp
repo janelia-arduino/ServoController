@@ -97,6 +97,26 @@ const bool direction_inverted_default[CHANNEL_COUNT_MAX] =
   direction_inverted_element_default,
 };
 
+const long velocity_limit_default[CHANNEL_COUNT_MAX] =
+{
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+  velocity_limit_element_default,
+};
+
 // Parameters
 
 // Functions

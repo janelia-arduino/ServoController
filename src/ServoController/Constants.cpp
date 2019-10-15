@@ -26,12 +26,17 @@ const modular_server::FirmwareInfo firmware_info =
 
 CONSTANT_STRING(hardware_name,"servo_controller");
 
+const long milliseconds_per_second = 1000;
+
+const long velocity_period_ms = 10;
+
 // Pins
 
 // Units
 CONSTANT_STRING(us_units,"us");
 CONSTANT_STRING(degree_per_us_units,"degree/us");
 CONSTANT_STRING(degree_units,"degree");
+CONSTANT_STRING(unit_pulse_duration_per_s_units,"unit_pulse_duration/s");
 
 // Properties
 CONSTANT_STRING(channel_count_property_name,"channelCount");
@@ -47,6 +52,11 @@ const double travel_per_unit_pulse_duration_element_default = 0.085;
 
 CONSTANT_STRING(direction_inverted_property_name,"directionInverted");
 const bool direction_inverted_element_default = false;
+
+CONSTANT_STRING(velocity_limit_property_name,"velocityLimit");
+const long velocity_limit_min = 1;
+const long velocity_limit_max = 50000;
+const long velocity_limit_element_default = 5000;
 
 // Parameters
 CONSTANT_STRING(channel_parameter_name,"channel");
