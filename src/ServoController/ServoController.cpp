@@ -68,8 +68,9 @@ void ServoController::setup()
   modular_server_.createProperty(constants::direction_inverted_property_name,constants::direction_inverted_default);
 
   modular_server::Property & velocity_limit_property = modular_server_.createProperty(constants::velocity_limit_property_name,constants::velocity_limit_default);
-  velocity_limit_property.setUnits(constants::unit_pulse_duration_per_s_units);
+  velocity_limit_property.setUnits(constants::unit_pulse_duration_per_velocity_period_units);
   velocity_limit_property.setRange(constants::velocity_limit_min,constants::velocity_limit_max);
+  velocity_limit_property.attachPostSetElementValueFunctor(makeFunctor((Functor1<size_t> *)0,*this,&ServoController::setVelocityLimitElementHandler));
 
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
@@ -149,10 +150,8 @@ void ServoController::setChannelPulseDuration(size_t channel,
     return;
   }
   event_controller_.clear(event_ids_[channel]);
-  // long pulse_duration_diff = pulse_duration - channel_info_array_[channel].pulse_duration;
-  PCA9685::setChannelServoPulseDuration(channel,pulse_duration);
   noInterrupts();
-  channel_info_array_[channel].pulse_duration = pulse_duration;
+  channel_info_array_[channel].pulse_duration_target = pulse_duration;
   interrupts();
 }
 
@@ -226,6 +225,14 @@ void ServoController::addEvent(size_t channel,
   event_ids_[channel] = event_id;
 }
 
+void ServoController::setAtTargetPositionFunctor(size_t channel,
+  const Functor1<int> & at_target_position_functor)
+{
+  noInterrupts();
+  channel_info_array_[channel].at_target_position_functor = at_target_position_functor;
+  interrupts();
+}
+
 long ServoController::angleToPulseDuration(size_t channel,
   double angle)
 {
@@ -250,7 +257,33 @@ void ServoController::setupVelocityEvents()
 {
   for (size_t channel=0; channel<constants::CHANNEL_COUNT_MAX; ++channel)
   {
-    channel_info_array_[channel].pulse_duration = constants::center_pulse_duration_element_default;
+    setVelocityLimitElementHandler(channel);
+
+    constants::ChannelInfo & channel_info = channel_info_array_[channel];
+    channel_info.pulse_duration = constants::center_pulse_duration_element_default;
+    channel_info.pulse_duration_target = channel_info.pulse_duration;
+    channel_info.at_target_position_functor = dummy_functor_;
+    if (channel == 0)
+    {
+      channel_info.velocity_event_id =
+        event_controller_.addInfiniteRecurringEventUsingDelay(
+          makeFunctor((Functor1<int> *)0,*this,&ServoController::velocityHandler),
+          constants::velocity_delay,
+          constants::velocity_period,
+          channel);
+      event_controller_.enable(channel_info.velocity_event_id);
+    }
+    else
+    {
+      channel_info.velocity_event_id =
+        event_controller_.addInfiniteRecurringEventUsingOffset(
+          makeFunctor((Functor1<int> *)0,*this,&ServoController::velocityHandler),
+          channel_info_array_[channel - 1].velocity_event_id,
+          constants::velocity_offset,
+          constants::velocity_period,
+          channel);
+      event_controller_.enable(channel_info.velocity_event_id);
+    }
   }
 }
 
@@ -351,6 +384,42 @@ void ServoController::rotateAllByHandler()
   rotateAllBy(angle);
 }
 
+void ServoController::setVelocityLimitElementHandler(size_t channel)
+{
+  long velocity_limit;
+  modular_server_.property(constants::velocity_limit_property_name).getElementValue(channel,velocity_limit);
+  noInterrupts();
+  channel_info_array_[channel].velocity_limit = velocity_limit;
+  interrupts();
+}
+
 void ServoController::velocityHandler(int channel)
 {
+  constants::ChannelInfo & channel_info = channel_info_array_[channel];
+  if (channel_info.pulse_duration_target != channel_info.pulse_duration)
+  {
+    uint16_t pulse_duration;
+    bool at_target_position = false;
+    long pulse_duration_diff = channel_info.pulse_duration_target - channel_info.pulse_duration;
+    if (abs(pulse_duration_diff) <= channel_info.velocity_limit)
+    {
+      pulse_duration = channel_info.pulse_duration_target;
+      at_target_position = true;
+    }
+    else if (pulse_duration_diff < 0)
+    {
+      pulse_duration = channel_info.pulse_duration - channel_info.velocity_limit;
+    }
+    else
+    {
+      pulse_duration = channel_info.pulse_duration + channel_info.velocity_limit;
+    }
+    channel_info.pulse_duration = pulse_duration;
+    PCA9685::setChannelServoPulseDuration(channel,pulse_duration);
+    if (at_target_position)
+    {
+      channel_info.at_target_position_functor(channel);
+      channel_info.at_target_position_functor = dummy_functor_;
+    }
+  }
 }

@@ -10,6 +10,7 @@
 #include <ConstantVariable.h>
 #include <ModularDeviceBase.h>
 #include <Wire.h>
+#include <Functor.h>
 #include <PCA9685.h>
 
 
@@ -36,12 +37,17 @@ extern const size_t output_enable_pin;
 
 extern const long milliseconds_per_second;
 
-extern const long velocity_period_ms;
+extern const long velocity_delay;
+extern const long velocity_period;
+extern const long velocity_offset;
 
 struct ChannelInfo
 {
+  uint16_t velocity_limit;
   uint16_t pulse_duration;
+  uint16_t pulse_duration_target;
   EventId velocity_event_id;
+  Functor1<int> at_target_position_functor;
 };
 
 // Pins
@@ -50,7 +56,7 @@ struct ChannelInfo
 extern ConstantString us_units;
 extern ConstantString degree_per_us_units;
 extern ConstantString degree_units;
-extern ConstantString unit_pulse_duration_per_s_units;
+extern ConstantString unit_pulse_duration_per_velocity_period_units;
 
 // Properties
 // Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]

@@ -50,6 +50,8 @@ protected:
   void addEvent(size_t channel,
     long delay,
     const Functor1<int> & event_functor);
+  void setAtTargetPositionFunctor(size_t channel,
+    const Functor1<int> & at_target_position_functor);
 
   // Handlers
   virtual void setChannelCountHandler();
@@ -62,10 +64,11 @@ private:
   modular_server::Function functions_[servo_controller::constants::FUNCTION_COUNT_MAX];
   modular_server::Callback callbacks_[servo_controller::constants::CALLBACK_COUNT_MAX];
 
-  servo_controller::constants::ChannelInfo  channel_info_array_[servo_controller::constants::CHANNEL_COUNT_MAX];
-
   EventController<servo_controller::constants::EVENT_COUNT_MAX> event_controller_;
   EventId event_ids_[servo_controller::constants::CHANNEL_COUNT_MAX];
+
+  servo_controller::constants::ChannelInfo  channel_info_array_[servo_controller::constants::CHANNEL_COUNT_MAX];
+  Functor1<int> dummy_functor_;
 
   long angleToPulseDuration(size_t channel,
     double angle);
@@ -80,6 +83,7 @@ private:
   void rotateAllToHandler();
   void rotateByHandler();
   void rotateAllByHandler();
+  void setVelocityLimitElementHandler(size_t channel);
   void velocityHandler(int channel);
 
 };
