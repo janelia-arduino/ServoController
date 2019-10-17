@@ -84,6 +84,7 @@ private:
   void rotateByHandler();
   void rotateAllByHandler();
   void setVelocityLimitElementHandler(size_t channel);
+  void dummyHandler(int channel);
   void velocityHandler(int channel);
 
 };

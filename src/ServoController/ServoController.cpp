@@ -255,13 +255,14 @@ long ServoController::angleToPulseDuration(size_t channel,
 
 void ServoController::setupVelocityEvents()
 {
+  dummy_functor_ = makeFunctor((Functor1<int> *)0,*this,&ServoController::dummyHandler);
   for (size_t channel=0; channel<constants::CHANNEL_COUNT_MAX; ++channel)
   {
     setVelocityLimitElementHandler(channel);
 
     constants::ChannelInfo & channel_info = channel_info_array_[channel];
     channel_info.pulse_duration = constants::center_pulse_duration_element_default;
-    channel_info.pulse_duration_target = channel_info.pulse_duration;
+    channel_info.pulse_duration_target = constants::center_pulse_duration_element_default;
     channel_info.at_target_position_functor = dummy_functor_;
     if (channel == 0)
     {
@@ -391,6 +392,10 @@ void ServoController::setVelocityLimitElementHandler(size_t channel)
   noInterrupts();
   channel_info_array_[channel].velocity_limit = velocity_limit;
   interrupts();
+}
+
+void ServoController::dummyHandler(int channel)
+{
 }
 
 void ServoController::velocityHandler(int channel)

@@ -1,0 +1,653 @@
+{
+  "id": "getApi",
+  "result": {
+    "firmware": [
+      "ServoController"
+    ],
+    "verbosity": "GENERAL",
+    "functions": [
+      {
+        "name": "setChannelPulseDuration",
+        "parameters": [
+          "channel",
+          "pulse_duration"
+        ]
+      },
+      {
+        "name": "setAllChannelsPulseDuration",
+        "parameters": [
+          "pulse_duration"
+        ]
+      },
+      {
+        "name": "rotateTo",
+        "parameters": [
+          "channel",
+          "angle"
+        ]
+      },
+      {
+        "name": "rotateAllTo",
+        "parameters": [
+          "angle"
+        ]
+      },
+      {
+        "name": "rotateBy",
+        "parameters": [
+          "channel",
+          "angle"
+        ]
+      },
+      {
+        "name": "rotateAllBy",
+        "parameters": [
+          "angle"
+        ]
+      }
+    ],
+    "parameters": [
+      {
+        "name": "channel",
+        "type": "long"
+      },
+      {
+        "name": "pulse_duration",
+        "type": "long"
+      },
+      {
+        "name": "angle",
+        "type": "double"
+      }
+    ],
+    "properties": [
+      {
+        "name": "channelCount",
+        "type": "long",
+        "functions": [
+          {
+            "name": "getValue",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setValue",
+            "parameters": [
+              "value"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "getDefaultValue",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setValueToDefault",
+            "result_info": {
+              "type": "long"
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "long"
+          }
+        ]
+      },
+      {
+        "name": "centerPulseDuration",
+        "type": "array",
+        "array_element_type": "long",
+        "functions": [
+          {
+            "name": "getValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setValue",
+            "parameters": [
+              "value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getDefaultValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setValueToDefault",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setElementValue",
+            "parameters": [
+              "element_index",
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getDefaultElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setElementValueToDefault",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setAllElementValues",
+            "parameters": [
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getArrayLength",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setArrayLength",
+            "parameters": [
+              "array_length"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "array",
+            "array_element_type": "long"
+          },
+          {
+            "name": "element_index",
+            "type": "long"
+          },
+          {
+            "name": "element_value",
+            "type": "long"
+          },
+          {
+            "name": "array_length",
+            "type": "long"
+          }
+        ]
+      },
+      {
+        "name": "travelPerUnitPulseDuration",
+        "type": "array",
+        "array_element_type": "double",
+        "functions": [
+          {
+            "name": "getValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "setValue",
+            "parameters": [
+              "value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "getDefaultValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "setValueToDefault",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "getElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "double"
+            }
+          },
+          {
+            "name": "setElementValue",
+            "parameters": [
+              "element_index",
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "getDefaultElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "double"
+            }
+          },
+          {
+            "name": "setElementValueToDefault",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "setAllElementValues",
+            "parameters": [
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "double"
+            }
+          },
+          {
+            "name": "getArrayLength",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setArrayLength",
+            "parameters": [
+              "array_length"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "array",
+            "array_element_type": "double"
+          },
+          {
+            "name": "element_index",
+            "type": "long"
+          },
+          {
+            "name": "element_value",
+            "type": "double"
+          },
+          {
+            "name": "array_length",
+            "type": "long"
+          }
+        ]
+      },
+      {
+        "name": "directionInverted",
+        "type": "array",
+        "array_element_type": "bool",
+        "functions": [
+          {
+            "name": "getValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "setValue",
+            "parameters": [
+              "value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "getDefaultValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "setValueToDefault",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "getElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "bool"
+            }
+          },
+          {
+            "name": "setElementValue",
+            "parameters": [
+              "element_index",
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "getDefaultElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "bool"
+            }
+          },
+          {
+            "name": "setElementValueToDefault",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "setAllElementValues",
+            "parameters": [
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "bool"
+            }
+          },
+          {
+            "name": "getArrayLength",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setArrayLength",
+            "parameters": [
+              "array_length"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "array",
+            "array_element_type": "bool"
+          },
+          {
+            "name": "element_index",
+            "type": "long"
+          },
+          {
+            "name": "element_value",
+            "type": "bool"
+          },
+          {
+            "name": "array_length",
+            "type": "long"
+          }
+        ]
+      },
+      {
+        "name": "velocityLimit",
+        "type": "array",
+        "array_element_type": "long",
+        "functions": [
+          {
+            "name": "getValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setValue",
+            "parameters": [
+              "value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getDefaultValue",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setValueToDefault",
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setElementValue",
+            "parameters": [
+              "element_index",
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getDefaultElementValue",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setElementValueToDefault",
+            "parameters": [
+              "element_index"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "setAllElementValues",
+            "parameters": [
+              "element_value"
+            ],
+            "result_info": {
+              "type": "array",
+              "array_element_type": "long"
+            }
+          },
+          {
+            "name": "getArrayLength",
+            "result_info": {
+              "type": "long"
+            }
+          },
+          {
+            "name": "setArrayLength",
+            "parameters": [
+              "array_length"
+            ],
+            "result_info": {
+              "type": "long"
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "array",
+            "array_element_type": "long"
+          },
+          {
+            "name": "element_index",
+            "type": "long"
+          },
+          {
+            "name": "element_value",
+            "type": "long"
+          },
+          {
+            "name": "array_length",
+            "type": "long"
+          }
+        ]
+      }
+    ],
+    "callbacks": [
+      {
+        "name": "enableAll",
+        "functions": [
+          {
+            "name": "trigger"
+          },
+          {
+            "name": "attachTo",
+            "parameters": [
+              "pin_name",
+              "pin_mode"
+            ]
+          },
+          {
+            "name": "detachFrom",
+            "parameters": [
+              "pin_name"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pin_name",
+            "type": "string"
+          },
+          {
+            "name": "pin_mode",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "disableAll",
+        "functions": [
+          {
+            "name": "trigger"
+          },
+          {
+            "name": "attachTo",
+            "parameters": [
+              "pin_name",
+              "pin_mode"
+            ]
+          },
+          {
+            "name": "detachFrom",
+            "parameters": [
+              "pin_name"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pin_name",
+            "type": "string"
+          },
+          {
+            "name": "pin_mode",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  }
+}
